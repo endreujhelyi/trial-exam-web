@@ -20,6 +20,3 @@ var decoder = function(text, shift) {
   }
   return decodedText;
 }
-
-
-console.log(decoder('hello mindenki szia sziasztok', 2));
