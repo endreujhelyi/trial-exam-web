@@ -18,7 +18,7 @@ var connection = mysql.createConnection({
 
 
 
-// REQUEST TO PLAYLISTS
+// REQUESTS TO LIBRARY
 codeLibrary.get('/decode/all', function(req, res) {
   connection.query(
     `SELECT text FROM encoded_codes;`,
