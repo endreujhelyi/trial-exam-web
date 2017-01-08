@@ -6,7 +6,8 @@ var bodyParser = require('body-parser'),
 
 var express = require('express'),
     codeLibrary = express(),
-    decoder = ('./decoder.js');
+    decode = require('./decoder.js');
+
 codeLibrary.use(bodyParser.json());
 codeLibrary.use(cors());
 
@@ -16,7 +17,6 @@ var connection = mysql.createConnection({
   password: 'szomoruszamuraj',
   database: 'codeLibrary'
 });
-
 
 
 // REQUESTS TO LIBRARY
@@ -36,10 +36,10 @@ codeLibrary.get('/decode/all', function(req, res) {
 codeLibrary.post('/decode', function(req, res) {
   if (req.body.shift >= -25 && req.body.shift <= 25) {
     connection.query(
-      `INSERT INTO encoded_codes(text)
-      VALUES ${decoder(req.body.text, req.body.shift)};`,
+      `INSERT INTO encoded_codes(text, shift)
+        VALUES (${decode.decoder(req.body.text, req.body.shift)}, ${req.body.shift});`,
       function(err, rows, fields) {
-        res.status(200).send({status: 'ok', text: decoder(req.body.text, req.body.shift)});
+        res.status(200).send({status: 'ok', text: decode.decoder(req.body.text, req.body.shift)});
       }
   )} else {
     res.status(400).send({status: 'error', error: 'Shift is out of bound'});
@@ -48,6 +48,6 @@ codeLibrary.post('/decode', function(req, res) {
 
 
 connection.connect();
-codeLibrary.listen(8000, function() {
-  console.log("Server is running on port: 8000!");
+codeLibrary.listen(5000, function() {
+  console.log("Server is running on port: 5000!");
 });
