@@ -5,7 +5,8 @@ var bodyParser = require('body-parser'),
     mysql = require('mysql');
 
 var express = require('express'),
-    codeLibrary = express();
+    codeLibrary = express(),
+    decoder = ('./decoder.js');
 codeLibrary.use(bodyParser.json());
 codeLibrary.use(cors());
 
@@ -24,22 +25,29 @@ codeLibrary.get('/decode/all', function(req, res) {
     `SELECT text FROM encoded_codes;`,
     function(err, rows, fields) {
   		if (err) throw err;
-  		res.send(rows);
+      var allText = [];
+      rows.forEach(function(line, index) {
+        allText.push(line.text);
+      });
+      res.status(200).send({all: allText});
   });
 });
 
 codeLibrary.post('/decode', function(req, res) {
-  connection.query(
-    `INSERT INTO encoded_codes(text)
-    VALUES ${req.body.text};`,
-    function(err, rows, fields) {
-      if (err) throw err;
-      res.send(rows);
-  });
+  if (req.body.shift >= -25 && req.body.shift <= 25) {
+    connection.query(
+      `INSERT INTO encoded_codes(text)
+      VALUES ${decoder(req.body.text, req.body.shift)};`,
+      function(err, rows, fields) {
+        res.status(200).send({status: 'ok', text: decoder(req.body.text, req.body.shift)});
+      }
+  )} else {
+    res.status(400).send({status: 'error', error: 'Shift is out of bound'});
+  }
 });
 
 
 connection.connect();
-codeLibrary.listen(3000, function() {
-  console.log("Server is running on port: 3000!");
+codeLibrary.listen(8000, function() {
+  console.log("Server is running on port: 8000!");
 });

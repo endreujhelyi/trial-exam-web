@@ -8,7 +8,7 @@ var Ajax = function() {
 
   this.collector = function(method, resource, data, callback) {
     let xhr = new XMLHttpRequest();
-    xhr.open(method, 'http://localhost:3000' + resource, true);
+    xhr.open(method, 'http://localhost:8000' + resource, true);
     xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
     data = (data) ? JSON.stringify(data) : null;
     xhr.send(data);

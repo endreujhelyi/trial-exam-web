@@ -20,3 +20,18 @@ var decoder = function(text, shift) {
   }
   return decodedText;
 }
+
+
+decoder.get('/decode/all', function getid(req, resp) {
+  con.query('SELECT decoded FROM texts', function(err,rows){
+    if(err) {
+      console.log(err.toString());
+      return;
+    }
+    var all_texts = [];
+    for (var i = 0; i < rows.length; i++){
+      all_texts.push(rows[i].decoded);
+    }
+    resp.status(200).send({all: all_texts});
+  });
+});
