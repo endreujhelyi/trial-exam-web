@@ -35,13 +35,15 @@ codeLibrary.get('/decode/all', function(req, res) {
 
 codeLibrary.post('/decode', function(req, res) {
   if (req.body.shift >= -25 && req.body.shift <= 25) {
+    let codedText = decode.decoder(req.body.text, req.body.shift);
     connection.query(
       `INSERT INTO encoded_codes(text, shift)
-        VALUES (${decode.decoder(req.body.text, req.body.shift)}, ${req.body.shift});`,
+        VALUES ('${codedText}', ${req.body.shift});`,
       function(err, rows, fields) {
-        res.status(200).send({status: 'ok', text: decode.decoder(req.body.text, req.body.shift)});
-      }
-  )} else {
+        if (err) throw err;
+        res.status(200).send({status: 'ok', text: codedText});
+    })
+  } else {
     res.status(400).send({status: 'error', error: 'Shift is out of bound'});
   }
 });

@@ -19,5 +19,6 @@ exports.decoder = function (text, shift) {
       }
     }
   }
+
   return decodedText;
 }
